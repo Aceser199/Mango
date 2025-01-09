@@ -32,7 +32,7 @@ namespace Mango.Web.Service
                 ApiType = SD.ApiType.POST,
                 Url = $"{SD.AuthAPIBase}{authApi}/login",
                 Data = loginRequestDto
-            });
+            }, withBearer: false);
         }
 
         public async Task<ResponseDto> RegisterAsync(RegisterationRequestDto registerationRequestDto)
@@ -42,7 +42,7 @@ namespace Mango.Web.Service
                 ApiType = SD.ApiType.POST,
                 Url = $"{SD.AuthAPIBase}{authApi}/register",
                 Data = registerationRequestDto
-            });
+            }, withBearer: false);
         }
     }
 }
