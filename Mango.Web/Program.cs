@@ -2,6 +2,8 @@ using Mango.Web.Service;
 using Mango.Web.Service.IService;
 using Mango.Web.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,15 +12,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
-builder.Services.AddHttpClient<ICouponService, CouponService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
-SD.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"] ?? "N/A";
+builder.Services.AddHttpClient<ICouponService, CouponService>();
+builder.Services.AddHttpClient<IProductService, ProductService>();
 SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"] ?? "N/A";
+SD.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"] ?? "N/A";
+SD.ProductAPIBase = builder.Configuration["ServiceUrls:ProductAPI"] ?? "N/A";
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
@@ -27,6 +32,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.LoginPath = "/Auth/Login";
         option.AccessDeniedPath = "/Auth/AccessDenied";
     });
+
+builder.Services.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
+{
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    ReferenceHandler = ReferenceHandler.Preserve
+});
 
 var app = builder.Build();
 
